@@ -8,11 +8,10 @@ services:
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
-      KC_DB_USER: ${POSTGRES_USER}
+      KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_SCHEMA: public
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
-      KC_HOSTNAME: auth.entropeak.fr
-      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HOSTNAME: ${KEYCLOAK_HOST}
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_PROXY: edge
@@ -20,7 +19,7 @@ services:
       - ${KEYCLOAK_PORT}:8080
     depends_on:
       - keycloak-db
-    command: start --auto-build
+    command: ${KEYCLOAK_START_COMMAND}
 
   keycloak-db:
     container_name: keycloak-db
@@ -31,6 +30,8 @@ services:
     volumes:
       - ./container-data/db:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
+    expose:
+      - 5432
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: ${POSTGRES_USER}
